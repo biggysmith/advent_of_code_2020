@@ -11,10 +11,10 @@ struct ticket{
     unsigned int id;
 };
 
-ticket get_ticket(const std::string& pass){
+ticket get_ticket(const std::string& seat){
     unsigned int row = 127;
     unsigned int n = 6;
-    for(auto c : pass.substr(0,7)){
+    for(auto c : seat.substr(0,7)){
         if(c == 'F'){
             row &= ~(1U << n); // clear bit
         }
@@ -23,14 +23,14 @@ ticket get_ticket(const std::string& pass){
 
     unsigned int col = 7;
     n = 2;
-    for(auto c : pass.substr(7,11)){
+    for(auto c : seat.substr(7,11)){
         if(c == 'L'){
             col &= ~(1U << n); // clear bit
         }
         n--;
     }
 
-    return {pass, row, col, row*8 + col};
+    return {seat, row, col, row*8 + col};
 }
 
 std::string bin_to_seat(unsigned int bin){
@@ -818,7 +818,7 @@ void main()
 
     for(unsigned int i=0; i<mx; ++i){
         std::string seat = bin_to_seat(i);
-        if(std::find(seats.begin(), seats.end(), seat) != seats.end()){ // pass is in list, ignore
+        if(std::find(seats.begin(), seats.end(), seat) != seats.end()){ // seat is in list, ignore
             continue;
         }
 
