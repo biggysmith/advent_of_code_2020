@@ -8,20 +8,20 @@
 #include <sstream>
 
 std::vector<size_t> parse_list(const std::string& file){
-    std::vector<size_t> prog;
+    std::vector<size_t> numbers;
 
     std::ifstream file_stream(file);
     if(!file_stream){
         std::cout << "cannot open file" << std::endl;
-        return prog;
+        return numbers;
     }
 
     std::string line;
     while (std::getline(file_stream, line)) {
-        prog.push_back(std::stoull(line));
+        numbers.push_back(std::stoull(line));
     }
 
-    return prog;
+    return numbers;
 }
 
 void main()
