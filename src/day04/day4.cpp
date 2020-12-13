@@ -141,7 +141,7 @@ std::vector<passport> parse_txt(const std::string& file){
 
 void main()
 {
-    auto passports = parse_txt("../src/day4_input.txt");
+    auto passports = parse_txt("../src/day04/day4_input.txt");
 
     int valid = 0;
     for(auto& pass : passports){

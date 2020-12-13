@@ -119,7 +119,7 @@ void print_instructions(const std::vector<instruction_t>& instructions){
 
 void main()
 {
-    auto instructions = parse_instructions("../src/day12_input.txt");
+    auto instructions = parse_instructions("../src/day12/day12_input.txt");
 
     std::cout << process0(instructions) << std::endl;
 

@@ -83,7 +83,7 @@ void run_prog2(const program_t& prog){
 
 void main()
 {
-    auto prog = parse_prog("../src/day8_input.txt");
+    auto prog = parse_prog("../src/day08/day8_input.txt");
 
     run_prog1(prog);
 

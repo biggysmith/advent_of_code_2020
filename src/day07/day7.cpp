@@ -102,7 +102,7 @@ int bags_required(const std::map<std::string,std::vector<contains_t>>& bag_map,c
 
 void main()
 {
-    auto bag_map = parse_rules("../src/day7_input.txt");
+    auto bag_map = parse_rules("../src/day07/day7_input.txt");
 
     // part 1
     {

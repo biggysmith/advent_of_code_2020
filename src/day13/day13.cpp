@@ -74,7 +74,7 @@ T chinese_remainder(const std::vector<T>& num, const std::vector<T>& rem) {
 
 void main()
 {
-    auto times = parse_bus_times("../src/day13_input.txt");
+    auto times = parse_bus_times("../src/day13/day13_input.txt");
 
     // part 1
     {

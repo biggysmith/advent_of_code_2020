@@ -28,7 +28,7 @@ void main()
 {
     // part 1
     {
-        auto numbers = parse_list("../src/day10_input.txt");
+        auto numbers = parse_list("../src/day10/day10_input.txt");
 
         numbers.push_back(0); // charger outlet
         std::sort(numbers.begin(), numbers.end());
@@ -44,7 +44,7 @@ void main()
 
     // part 2
     {
-        auto numbers = parse_list("../src/day10_input.txt");
+        auto numbers = parse_list("../src/day10/day10_input.txt");
 
         numbers.push_back(0); // charger outlet
         std::sort(numbers.begin(), numbers.end());

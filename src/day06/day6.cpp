@@ -64,7 +64,7 @@ std::vector<std::pair<int,std::map<char,int>>> parse_txt2(const std::string& fil
 
 void main()
 {
-    auto groups = parse_txt2("../src/day6_input.txt");
+    auto groups = parse_txt2("../src/day06/day6_input.txt");
 
     int sum = 0;
     for(auto group : groups){

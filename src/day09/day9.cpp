@@ -26,7 +26,7 @@ std::vector<size_t> parse_list(const std::string& file){
 
 void main()
 {
-    auto numbers = parse_list("../src/day9_input.txt");
+    auto numbers = parse_list("../src/day09/day9_input.txt");
 
     int number_pos;
     size_t dodgy_number;

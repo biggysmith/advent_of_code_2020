@@ -138,14 +138,14 @@ void main()
 {
      // part 1
      {
-         auto grid = parse_grid("../src/day11_input.txt");
+         auto grid = parse_grid("../src/day11/day11_input.txt");
          while (!update_grid(grid,false,4)) {}
          std::cout << num_occupied_seats(grid) << std::endl;
      }
 
      // part 2
      {
-         auto grid = parse_grid("../src/day11_input.txt");
+         auto grid = parse_grid("../src/day11/day11_input.txt");
          while (!update_grid(grid,true,5)) {}
          std::cout << num_occupied_seats(grid) << std::endl;
      }
