@@ -6,6 +6,7 @@
 #include <map>
 #include <fstream>
 #include <sstream>
+#include <chrono>
 
 struct load{
     size_t addr;
