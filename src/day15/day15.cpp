@@ -13,7 +13,8 @@ void main()
 
     auto nth_spoken_word = [&](int n)
     {
-        std::unordered_map<int,record> number_map;
+        //std::unordered_map<int,record> number_map;
+        std::vector<record> number_map(n, {-1,-1});
         for(int i=0; i<numbers.size(); ++i){
             number_map[numbers[i]] = {i+1,-1};
         }
@@ -21,7 +22,8 @@ void main()
         int spoken_number = numbers.back();
         for(int i=(int)numbers.size(); i<n; ++i){
             spoken_number = number_map[spoken_number].second_last == -1 ? 0 : number_map[spoken_number].last - number_map[spoken_number].second_last;
-            number_map[spoken_number] = { i+1, number_map.find(spoken_number) != number_map.end() ? number_map[spoken_number].last : -1 };
+            //number_map[spoken_number] = { i+1, number_map.find(spoken_number) != number_map.end() ? number_map[spoken_number].last : -1 };
+            number_map[spoken_number] = { i+1, number_map[spoken_number].last!=-1 ? number_map[spoken_number].last : -1 };
         }
 
         return spoken_number;
