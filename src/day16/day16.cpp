@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include <map>
+#include <set>
 #include <fstream>
 #include <sstream>
 
@@ -88,41 +89,106 @@ void main()
 {
     auto input = parse_input("../src/day16/day16_input.txt");
 
-    std::vector<int> errors;
-    for(auto& t : input.nearby_tickets){
-        auto invalids = validate_ticket(input.rules, t);
-        if(!invalids.empty()){
-            std::cout << "invalid" << std::endl;
-            for(auto i : invalids){
-                errors.push_back(i);
-            }   
-        }else{
-            std::cout << "valid" << std::endl;
+    // part 1
+    {
+        std::vector<int> errors;
+        for (auto& t : input.nearby_tickets) {
+            auto invalids = validate_ticket(input.rules, t);
+            if (!invalids.empty()) {
+                for (auto i : invalids) {
+                    errors.push_back(i);
+                }
+            }
         }
+
+        int c = 0;
+        for (auto i : errors) {
+            std::cout << (c++ != 0 ? " + " : "") << i;
+        }
+        std::cout << " = " << std::accumulate(errors.begin(), errors.end(), 0) << std::endl;
     }
 
-    for(auto i : errors){
-        std::cout << i << " + ";
-    } 
-    std::cout << std::endl;
-    std::cout << std::accumulate(errors.begin(), errors.end(), 0) << std::endl;
+    {
+        std::vector<ticket_t> valid_tickets;
+        for (auto& t : input.nearby_tickets) {
+            auto invalids = validate_ticket(input.rules, t);
+            if (invalids.empty()) {
+                valid_tickets.push_back(t);
+            }
+        }
 
-    /*for(auto& r : input.rules){
-        std::cout << r.name << ": " << r.r0 << "-" << r.r1 << " or " << r.r2 << "-" << r.r3 << std::endl; 
-    }
-    std::cout << std::endl;
+        int columns = (int)valid_tickets.front().size();
+        int rows = (int)valid_tickets.size();
 
-    std::cout << "your ticket:" << std::endl;
-    for(auto i : input.my_ticket){
-        std::cout << i << ",";
-    }
-    std::cout << std::endl << std::endl;
+        std::vector<std::set<int>> valid_sets(columns);
 
-    std::cout << "nearby ticket:" << std::endl;
-    for(auto& t : input.nearby_tickets){
-        for(auto i : t){
+        for(int col=0; col<columns; ++col){
+            for(int i=0; i<input.rules.size(); ++i){
+                bool valid = true;
+                for(int row=0; row<rows; ++row){
+                    auto& r = input.rules[i];
+                    int val = valid_tickets[row][col];
+                    if(!((val >= r.r0 && val <= r.r1) || (val >= r.r2 && val <= r.r3))){
+                        valid = false;
+                        break;
+                    }
+                }
+                if(valid){      
+                    valid_sets[col].insert(i);
+                }
+            }
+        }
+
+        std::vector<bool> found_rule(columns,0);
+
+        auto solved = [&]{
+            return std::all_of(valid_sets.begin(),valid_sets.end(),[](auto& s){ return s.size()<=1; });
+        };
+
+        auto remove_rule = [&](int rn){
+            for(int r=0; r<found_rule.size(); ++r){
+                if(!found_rule[r]){
+                    valid_sets[r].erase(rn);
+                }
+            }
+        };
+
+        auto refresh = [&](){
+            for(int c=0; c<columns; ++c){
+                if(!found_rule[c] && valid_sets[c].size()==1){
+                    found_rule[c] = true;
+                    remove_rule(*valid_sets[c].begin());
+                    return;
+                }
+            }
+        };
+
+        while(!solved()){
+            refresh();
+        }
+
+        std::cout << std::endl << "my ticket:";
+        for(auto i : input.my_ticket){
             std::cout << i << ",";
         }
+        std::cout << std::endl << std::endl;
+
+        std::vector<size_t> prod;
+        for(int c=0; c<columns; ++c){
+            int field_id = *valid_sets[c].begin();
+            std::cout << c << " - " << input.rules[field_id].name << " : " << input.my_ticket[c] << std::endl;
+            if(field_id < 6){
+                prod.push_back(input.my_ticket[c]);
+            }
+        }
+
         std::cout << std::endl;
-    }*/
+        int c = 0;
+        for (auto i : prod) {
+            std::cout << (c++ != 0 ? " * " : "") << i;
+        }
+        std::cout << " = " << std::accumulate(prod.begin(), prod.end(), 1ULL, std::multiplies<size_t>()) << std::endl;
+    }
+
+
 }
