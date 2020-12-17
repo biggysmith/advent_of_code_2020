@@ -36,19 +36,19 @@ void main()
         int w_offset = depth*height*width;
         int z_offset = height*width;
 
-        std::vector<int> src_volume(width*height*depth*duration, 0);
+        std::vector<char> src_volume(width*height*depth*duration, 0);
 
-        auto lookup = [&](std::vector<int>& volume, int x, int y, int z, int w) -> int& {
+        auto lookup = [&](std::vector<char>& volume, int x, int y, int z, int w) -> auto& {
             return volume[w*w_offset + z*z_offset + y*width + x];
         };
 
-        for (int y = 0; y < input.size(); ++y) {
-            for (int x = 0; x < input.front().size(); ++x) {
+        for (int y=0; y<input.size(); ++y) {
+            for (int x=0; x<input.front().size(); ++x) {
                 lookup(src_volume, width/2 + x, height/2 + y, depth/2, duration/2) = input[y][x] == '#' ? 1 : 0;
             }
         }
 
-        std::vector<int> dst_volume = src_volume;
+        std::vector<char> dst_volume = src_volume;
 
         auto cycle = [&]
         {
