@@ -29,72 +29,154 @@ void main()
         std::cout << s << std::endl;
     }
 
-    int width = 100;
-    int height = 100;
-    int depth = 100;
-
-    std::vector<int> src_volume(width*height*depth,0);
-
-    auto lookup = [&](std::vector<int>& volume,int x,int y,int z) -> int&{
-        return volume[(z*height*width)+(y*width)+x];
-    };
-
-    for(int y=0; y<input.size(); ++y){
-        for(int x=0; x<input.front().size(); ++x){
-            lookup(src_volume,width/2+x,height/2+y,depth/2) = input[y][x] == '#' ? 1 : 0;
-            //std::cout << lookup(src_volume,width/2+x,height/2+y,depth/2) << "";
-        }
-        //std::cout << std::endl;
-    }
-
-    std::vector<int> dst_volume(src_volume.size(),0);
-
-    auto cycle = [&]
+    // part1
     {
-        for(int z=1; z<depth-1; ++z){
-            for(int y=1; y<height-1; ++y){
-                for(int x=1; x<width-1; ++x){
+        int width = 100;
+        int height = 100;
+        int depth = 100;
 
-                    int count = 0;
-                    int neighbours_active = 0;
-                    for(int z2=z-1; z2<=z+1; ++z2){
-                        for(int y2=y-1; y2<=y+1; ++y2){
-                            for(int x2=x-1; x2<=x+1; ++x2){
-                                if(std::tie(x2,y2,z2) != std::tie(x,y,z)){
-                                    neighbours_active += lookup(src_volume,x2,y2,z2);
+        std::vector<int> src_volume(width*height*depth, 0);
+
+        auto lookup = [&](std::vector<int>& volume, int x, int y, int z) -> int& {
+            return volume[(z*height*width) + (y*width) + x];
+        };
+
+        for (int y = 0; y < input.size(); ++y) {
+            for (int x = 0; x < input.front().size(); ++x) {
+                lookup(src_volume, width / 2 + x, height / 2 + y, depth / 2) = input[y][x] == '#' ? 1 : 0;
+            }
+        }
+
+        std::vector<int> dst_volume(src_volume.size(), 0);
+
+        auto cycle = [&]
+        {
+            for (int z = 1; z < depth - 1; ++z) {
+                for (int y = 1; y < height - 1; ++y) {
+                    for (int x = 1; x < width - 1; ++x) {
+
+                        int count = 0;
+                        int neighbours_active = 0;
+                        for (int z2 = z - 1; z2 <= z + 1; ++z2) {
+                            for (int y2 = y - 1; y2 <= y + 1; ++y2) {
+                                for (int x2 = x - 1; x2 <= x + 1; ++x2) {
+                                    if (std::tie(x2, y2, z2) != std::tie(x, y, z)) {
+                                        neighbours_active += lookup(src_volume, x2, y2, z2);
+                                    }
                                 }
                             }
                         }
-                    }
 
-                    if(lookup(src_volume,x,y,z) == 1){
-                        lookup(dst_volume,x,y,z) = (neighbours_active==2 || neighbours_active==3) ? 1 : 0;
-                    }else{
-                        lookup(dst_volume,x,y,z) = (neighbours_active==3) ? 1 : 0;
-                    }
+                        if (lookup(src_volume, x, y, z) == 1) {
+                            lookup(dst_volume, x, y, z) = (neighbours_active == 2 || neighbours_active == 3) ? 1 : 0;
+                        }
+                        else {
+                            lookup(dst_volume, x, y, z) = (neighbours_active == 3) ? 1 : 0;
+                        }
 
+                    }
                 }
+            }
+
+        };
+
+        auto count = [&] {
+            int active = 0;
+            for (int z = 1; z < depth - 1; ++z) {
+                for (int y = 1; y < height - 1; ++y) {
+                    for (int x = 1; x < width - 1; ++x) {
+                        active += lookup(dst_volume, x, y, z);
+                    }
+                }
+            }
+            return active;
+        };
+
+        for (int i = 0; i < 6; ++i) {
+            cycle();
+            std::cout << count() << std::endl;
+            std::swap(dst_volume, src_volume);
+        }
+    }
+
+
+
+    // part2
+    {
+        int dims = 27;
+        int width = dims;
+        int height = dims;
+        int depth = dims;
+        int duration = dims;
+
+        std::vector<int> src_volume(width*height*depth*duration, 0);
+
+        auto lookup = [&](std::vector<int>& volume, int x, int y, int z, int w) -> int& {
+            return volume[(w*depth*height*width) + (z*height*width) + (y*width) + x];
+        };
+
+        for (int y = 0; y < input.size(); ++y) {
+            for (int x = 0; x < input.front().size(); ++x) {
+                lookup(src_volume, width/2 + x, height/2 + y, depth/2, duration/2) = input[y][x] == '#' ? 1 : 0;
             }
         }
 
-    };
+        std::vector<int> dst_volume(src_volume.size(), 0);
 
-    auto count = [&]{
-        int active = 0;
-        for(int z=1; z<depth-1; ++z){
-            for(int y=1; y<height-1; ++y){
-                for(int x=1; x<width-1; ++x){
-                    active += lookup(dst_volume,x,y,z);
+        auto cycle = [&]
+        {
+            for (int w = 1; w < duration - 1; ++w) {
+                for (int z = 1; z < depth - 1; ++z) {
+                    for (int y = 1; y < height - 1; ++y) {
+                        for (int x = 1; x < width - 1; ++x) {
+
+                            int count = 0;
+                            int neighbours_active = 0;
+                            for(int w2=w-1; w2<=w+1; ++w2){
+                                for(int z2=z-1; z2<=z+1; ++z2){
+                                    for(int y2=y-1; y2<=y+1; ++y2){
+                                        for(int x2=x-1; x2<=x+1; ++x2){
+                                            if (std::tie(x2, y2, z2, w2) != std::tie(x, y, z, w)) {
+                                                neighbours_active += lookup(src_volume, x2, y2, z2, w2);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            if (lookup(src_volume, x, y, z, w) == 1) {
+                                lookup(dst_volume, x, y, z, w) = (neighbours_active == 2 || neighbours_active == 3) ? 1 : 0;
+                            }
+                            else {
+                                lookup(dst_volume, x, y, z, w) = (neighbours_active == 3) ? 1 : 0;
+                            }
+
+                        }
+                    }
                 }
             }
-        }
-        return active;
-    };
 
-    for(int i=0; i<6; ++i){
-        cycle();
-        std::cout << count() << std::endl;
-        std::swap(dst_volume,src_volume);
+        };
+
+        auto count = [&] {
+            int active = 0;
+            for (int w = 1; w < duration - 1; ++w) {
+                for (int z = 1; z < depth - 1; ++z) {
+                    for (int y = 1; y < height - 1; ++y) {
+                        for (int x = 1; x < width - 1; ++x) {
+                            active += lookup(dst_volume, x, y, z, w);
+                        }
+                    }
+                }
+            }
+            return active;
+        };
+
+        for (int i = 0; i < 6; ++i) {
+            cycle();
+            std::cout << count() << std::endl;
+            std::swap(dst_volume, src_volume);
+        }
     }
 
 }
