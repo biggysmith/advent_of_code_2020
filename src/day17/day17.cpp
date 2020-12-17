@@ -7,7 +7,20 @@
 #include <set>
 #include <fstream>
 #include <sstream>
+#include <chrono>
 
+struct timer{
+    using timer_t = std::chrono::steady_clock;
+
+    timer() 
+        : s_(timer_t::now()) {}
+
+    ~timer(){
+        std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(timer_t::now() - s_).count() << "ms" << std::endl;
+    }
+
+    timer_t::time_point s_;
+};
 
 std::vector<std::string> parse_input(const std::string& file){
     std::vector<std::string> input;
@@ -50,32 +63,41 @@ void main()
 
         std::vector<char> dst_volume = src_volume;
 
-        auto cycle = [&]
+        auto cycle = [&]()
         {
             std::swap(dst_volume, src_volume);
 
+            #pragma omp parallel for
             for (int w=1; w<duration-1; ++w) {
+                auto* wsrc_ptr = src_volume.data() + w*w_offset;
+                auto* wdst_ptr = dst_volume.data() + w*w_offset;
                 for (int z=1; z<depth-1; ++z) {
+                    auto* zsrc_ptr = wsrc_ptr + z*z_offset;
+                    auto* zdst_ptr = wdst_ptr + z*z_offset;
                     for (int y=1; y<height-1; ++y) {
-                        for (int x=1; x<width-1; ++x) {
+                        auto* ysrc_ptr = zsrc_ptr + y*width + 1;
+                        auto* ydst_ptr = zdst_ptr + y*width + 1;
+                        for (int x=1; x<width-1; ++x, ++ysrc_ptr, ++ydst_ptr) {
 
                             int neighbours_active = 0;
                             for(int w2=w-1; w2<=w+1; ++w2){
+                                auto* wneigh_ptr = src_volume.data() + w2*w_offset;
                                 for(int z2=z-1; z2<=z+1; ++z2){
+                                    auto* zneigh_ptr = wneigh_ptr + z2*z_offset;
                                     for(int y2=y-1; y2<=y+1; ++y2){
-                                        for(int x2=x-1; x2<=x+1; ++x2){
-                                            if (std::tie(x2, y2, z2, w2) != std::tie(x, y, z, w)) {
-                                                neighbours_active += lookup(src_volume, x2, y2, z2, w2);
-                                            }
+                                        auto* yneigh_ptr = zneigh_ptr + y2*width + x - 1;
+                                        for(int x2=x-1; x2<=x+1; ++x2, ++yneigh_ptr){
+                                            neighbours_active += *yneigh_ptr;
                                         }
                                     }
                                 }
                             }
+                            neighbours_active -= *ysrc_ptr; // remove x,y,z from neighbors rather than checking in loop, faster
 
-                            if (lookup(src_volume, x, y, z, w)) {
-                                lookup(dst_volume, x, y, z, w) = (neighbours_active == 2 || neighbours_active == 3);
+                            if (*ysrc_ptr) {
+                                *ydst_ptr = (neighbours_active == 2 || neighbours_active == 3);
                             }else {
-                                lookup(dst_volume, x, y, z, w) = (neighbours_active == 3);
+                                *ydst_ptr = (neighbours_active == 3);
                             }
 
                         }
@@ -87,10 +109,13 @@ void main()
         auto count = [&] {
             int active = 0;
             for (int w=1; w<duration-1; ++w) {
+                auto* wdst_ptr = dst_volume.data() + w*w_offset;
                 for (int z=1; z<depth-1; ++z) {
+                    auto* zdst_ptr = wdst_ptr + z*z_offset;
                     for (int y=1; y<height-1; ++y) {
-                        for (int x=1; x<width-1; ++x) {
-                            active += lookup(dst_volume, x, y, z, w);
+                        auto* ydst_ptr = zdst_ptr + y*width + 1;
+                        for (int x=1; x<width-1; ++x, ++ydst_ptr) {
+                            active += *ydst_ptr;
                         }
                     }
                 }
@@ -106,5 +131,10 @@ void main()
     };
 
     std::cout << "part1: " << cubes_active(3) << std::endl;
-    std::cout << "part2: " << cubes_active(4) << std::endl;
+
+    {
+        timer t;
+        std::cout << "part2: " << cubes_active(4) << std::endl;
+    }
+
 }
