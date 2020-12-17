@@ -59,7 +59,6 @@ void main()
                     for (int y=1; y<height-1; ++y) {
                         for (int x=1; x<width-1; ++x) {
 
-                            int count = 0;
                             int neighbours_active = 0;
                             for(int w2=w-1; w2<=w+1; ++w2){
                                 for(int z2=z-1; z2<=z+1; ++z2){
@@ -73,11 +72,10 @@ void main()
                                 }
                             }
 
-                            if (lookup(src_volume, x, y, z, w) == 1) {
-                                lookup(dst_volume, x, y, z, w) = (neighbours_active == 2 || neighbours_active == 3) ? 1 : 0;
-                            }
-                            else {
-                                lookup(dst_volume, x, y, z, w) = (neighbours_active == 3) ? 1 : 0;
+                            if (lookup(src_volume, x, y, z, w)) {
+                                lookup(dst_volume, x, y, z, w) = (neighbours_active == 2 || neighbours_active == 3);
+                            }else {
+                                lookup(dst_volume, x, y, z, w) = (neighbours_active == 3);
                             }
 
                         }
@@ -104,7 +102,7 @@ void main()
             cycle();
         }
 
-        return  count();
+        return count();
     };
 
     std::cout << "part1: " << cubes_active(3) << std::endl;
