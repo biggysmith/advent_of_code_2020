@@ -89,6 +89,12 @@ void main()
 {   
     auto input = parse_input("../src/day18/day18_input.txt");
 
-    std::cout << "part1: " << std::accumulate(input.begin(), input.end(), 0LL, [&](auto& a,auto& expr){ return a + eval(expr, false); }) << std::endl;
-    std::cout << "part2: " << std::accumulate(input.begin(), input.end(), 0LL, [&](auto& a,auto& expr){ return a + eval(expr, true); }) << std::endl;
+    auto sum = [&](bool advanced){
+        return [&](auto& a,auto& expr){ 
+            return a + eval(expr, advanced); 
+        };
+    };
+
+    std::cout << "part1: " << std::accumulate(input.begin(), input.end(), 0LL, sum(false)) << std::endl;
+    std::cout << "part2: " << std::accumulate(input.begin(), input.end(), 0LL, sum(true))  << std::endl;
 }
