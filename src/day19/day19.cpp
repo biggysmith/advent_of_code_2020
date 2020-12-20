@@ -89,12 +89,8 @@ bool check(const rule_map& rules, const rule_t& rule, const std::string& str, st
         }
     }
 
-    if(local_pos.empty()){
-        return false;
-    }else{
-        pos = local_pos;
-        return true;
-    }
+    pos = local_pos;
+    return !pos.empty();
 }
 
 bool check(const rule_map& rules, const std::string& str){
