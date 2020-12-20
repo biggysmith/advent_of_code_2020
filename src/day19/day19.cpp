@@ -16,8 +16,10 @@ struct rule_t{
     std::vector<int> sub_rules1;
 };
 
-std::pair<std::unordered_map<int,rule_t>,std::vector<std::string>> parse_input(const std::string& file){
-   std::pair<std::unordered_map<int,rule_t>,std::vector<std::string>> input;
+using rule_map = std::unordered_map<int,rule_t>;
+
+std::pair<rule_map,std::vector<std::string>> parse_input(const std::string& file){
+   std::pair<rule_map,std::vector<std::string>> input;
 
     std::ifstream file_stream(file);
     std::string line;
@@ -53,7 +55,7 @@ std::pair<std::unordered_map<int,rule_t>,std::vector<std::string>> parse_input(c
     return input;
 }
 
-bool check(const std::unordered_map<int,rule_t>& rules, const rule_t& rule, const std::string& str, std::vector<int>& pos)
+bool check(const rule_map& rules, const rule_t& rule, const std::string& str, std::vector<int>& pos)
 {
     if (rule.sub_rules0.empty()) {
         pos.erase(std::remove_if(pos.begin(),pos.end(),[&](auto& p){ return str[p++] != rule.s; }),pos.end());
@@ -95,7 +97,7 @@ bool check(const std::unordered_map<int,rule_t>& rules, const rule_t& rule, cons
     }
 }
 
-bool check(const std::unordered_map<int,rule_t>& rules, const std::string& str){
+bool check(const rule_map& rules, const std::string& str){
     std::vector<int> pos(1,0);
     return check(rules, rules.at(0), str, pos) && std::any_of(pos.begin(),pos.end(),[&](auto n){ return n >= str.size(); });
 }
