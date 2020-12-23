@@ -86,7 +86,6 @@ std::string get_edge(const std::vector<char>& tile_data,int e){
 
 
 using grid_t = std::vector<tile_t>;
-grid_t blank_grid;
 
 void find_grid(const std::map<size_t,tile_t>& tiles,grid_t& grid,int grid_width){
     if(grid.size() == tiles.size()){
