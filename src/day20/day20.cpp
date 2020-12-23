@@ -12,6 +12,7 @@
 #include <random>
 #include <chrono>
 
+
 struct tile_t{
     size_t id;
     std::vector<char> data;
@@ -85,15 +86,11 @@ std::string get_edge(const std::vector<char>& tile_data,int e){
 
 
 using grid_t = std::vector<tile_t>;
+grid_t blank_grid;
 
-grid_t append_tile(grid_t grid,const tile_t& tile){
-    grid.push_back(tile);
-    return grid;
-}
-
-grid_t find_grid(const std::map<size_t,tile_t>& tiles,grid_t& grid,int grid_width){
+void find_grid(const std::map<size_t,tile_t>& tiles,grid_t& grid,int grid_width){
     if(grid.size() == tiles.size()){
-        return grid;
+        return;
     }
      
     for(auto& [id,tile] : tiles)
@@ -116,10 +113,12 @@ grid_t find_grid(const std::map<size_t,tile_t>& tiles,grid_t& grid,int grid_widt
                     if(gx > 0)  edge_match &= get_edge(curr_tile.data, 3) == get_edge(grid[gy*grid_width+(gx-1)].data, 1); // match left
 
                     if(edge_match){
-                        auto found_grid = find_grid(tiles, append_tile(grid,curr_tile), grid_width);
-                        if(found_grid.size() == tiles.size()){
-                            return found_grid;
+                        grid.push_back(curr_tile);
+                        find_grid(tiles, grid, grid_width);
+                        if(grid.size() == tiles.size()){
+                            return;
                         }
+                        grid.pop_back();
                     };
 
                     curr_tile.data = rotate(curr_tile.data,10);
@@ -131,7 +130,6 @@ grid_t find_grid(const std::map<size_t,tile_t>& tiles,grid_t& grid,int grid_widt
         }
     }
 
-    return grid_t();
 }
 
 std::vector<char> fill_image(const grid_t& grid,int grid_width){
@@ -196,8 +194,8 @@ void main()
     int width = (int)sqrt(tiles.size());
 
     // part 1
-    grid_t empty_grid;
-    grid_t grid = find_grid(tiles, empty_grid, width);
+    grid_t grid;
+    find_grid(tiles, grid, width);
 
     auto grid_val = [&](int x,int y){
         return grid[y*width+x].id;
