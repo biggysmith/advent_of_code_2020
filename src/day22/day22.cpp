@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include <set>
+#include <unordered_set>
 #include <fstream>
 #include <sstream>
 
@@ -49,20 +50,24 @@ std::size_t vector_hash(const std::vector<T>& vec) {
     return ret;
 }
 
+template<typename C, typename T>
+auto contains(const C& c, const T& t){
+    return std::find(std::begin(c), std::end(c), t) != std::end(c);
+}
 
 bool play_game(decks_t& decks,bool recurse)
 {
-    std::set<size_t> player1_decks;
-    std::set<size_t> player2_decks;
+    std::vector<size_t> player1_decks;
+    std::vector<size_t> player2_decks;
 
     while(!decks.player1.empty() && !decks.player2.empty()){
         auto deck1_hash = vector_hash(decks.player1);
         auto deck2_hash = vector_hash(decks.player2);
-        if(player1_decks.count(deck1_hash) || player2_decks.count(deck2_hash)){
+        if(contains(player1_decks,deck1_hash) || contains(player2_decks,deck2_hash)){
             return true;
         }
-        player1_decks.insert(deck1_hash);
-        player2_decks.insert(deck2_hash);
+        player1_decks.push_back(deck1_hash);
+        player2_decks.push_back(deck2_hash);
 
 
         int player1_card = decks.player1.front();
