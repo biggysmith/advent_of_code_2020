@@ -55,7 +55,7 @@ auto contains(const C& c, const T& t){
     return std::find(std::begin(c), std::end(c), t) != std::end(c);
 }
 
-bool play_game(decks_t& decks,bool recurse)
+bool play_game(decks_t& decks,bool recurse,int depth=0)
 {
     std::vector<size_t> player1_decks;
     std::vector<size_t> player2_decks;
@@ -73,13 +73,19 @@ bool play_game(decks_t& decks,bool recurse)
         int player1_card = decks.player1.front();
         int player2_card = decks.player2.front();
 
+        if(depth > 0){ // player 1 wins if they have the max highest card
+            if(*std::max_element(decks.player1.begin(),decks.player1.end()) > *std::max_element(decks.player2.begin(),decks.player2.end())){
+                return true;
+            }
+        }
+
         bool player1_wins;
         if(recurse && player1_card < decks.player1.size() && player2_card < decks.player2.size()){
             decks_t new_deck {
                 std::vector<int>(decks.player1.begin()+1, decks.player1.begin()+1+player1_card),
                 std::vector<int>(decks.player2.begin()+1, decks.player2.begin()+1+player2_card)
             };
-            player1_wins = play_game(new_deck,recurse);
+            player1_wins = play_game(new_deck,recurse,depth+1);
         }else{
             player1_wins = player1_card > player2_card;
         }   
