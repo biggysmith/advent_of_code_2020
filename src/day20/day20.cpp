@@ -176,10 +176,7 @@ int find_any_nessies(const std::vector<char>& image,int grid_width){
             sub_image_str.append(image.data()+(y+2)*stride+x, width);
 
             num_nessies += std::equal(nessie_str.begin(),nessie_str.end(),sub_image_str.begin(),[](char a,char b){
-                if(a == ' '){
-                    return true; // only care about #'s
-                }
-                return (a == '#' && b == '#');
+                return (a == ' ') || (a == '#' && b == '#');
             });
         }
     }
