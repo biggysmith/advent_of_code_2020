@@ -7,7 +7,6 @@
 #include <sstream>
 #include <regex>
 
-
 std::vector<std::vector<std::string>> parse_input(const std::string& file){
     std::vector<std::vector<std::string>> input;
 
