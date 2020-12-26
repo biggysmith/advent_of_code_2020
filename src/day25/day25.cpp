@@ -26,7 +26,6 @@ void main()
     bool found = false;
     int64_t loop = 0;
     int64_t value0 = 1;
-    int64_t value1 = 1;
     int64_t subject_number = 7;
 
     while(!found){
@@ -35,25 +34,19 @@ void main()
         value0 *= subject_number;
         value0 %= 20201227;
 
-        value1 *= keys[0];
-        value1 %= 20201227;
-
         if(value0 == keys[1]){
             found = true;
         }
     }
 
-    int64_t value2 = 1;
+    int64_t value1 = 1;
 
     for(int i=0; i<loop; ++i){
-        value2 *= keys[0];
-        value2 %= 20201227;
+        value1 *= keys[0];
+        value1 %= 20201227;
     }
 
-    if(value1 == value2){
-        std::cout << "part1: " << value2 << std::endl;
-    }
-    
+    std::cout << "part1: " << value1 << std::endl;
     std::cout << "part2: " << "thanks crabby!" << std::endl;
 }
 
