@@ -12,8 +12,8 @@ std::vector<std::vector<std::string>> parse_input(const std::string& file){
 
     std::ifstream file_stream(file);
     std::string line;
-    while(std::getline(file_stream, line)){
-        std::regex re("w|e|nw|ne|sw|se");
+    std::regex re("w|e|nw|ne|sw|se");
+    while(std::getline(file_stream, line)){ 
         std::sregex_token_iterator first{line.begin(), line.end(), re}, last;
         std::vector<std::string> tokens{first, last};
         input.push_back({first, last});
@@ -61,7 +61,7 @@ int main()
 
         }
 
-        tile(floor,x,y) = tile(floor,x,y)==1 ? 0 : 1;
+        tile(floor,x,y) = !tile(floor,x,y);
     }
 
     std::cout << "part1: " << std::count(floor.begin(), floor.end(), 0) << std::endl;
