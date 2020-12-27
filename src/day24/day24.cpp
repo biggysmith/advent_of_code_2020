@@ -31,6 +31,7 @@ int main()
     int height = 140;
 
     std::vector<int> floor(width*height, 1);
+    std::vector<int> dst_floor(width*height);
 
     auto tile = [&](std::vector<int>& tiles, int x,int y) -> auto& {
         return tiles[y*width+x];
@@ -68,9 +69,9 @@ int main()
 
     auto process_day = [&]
     {
-        std::vector<int> dst_floor(floor);
+        std::copy(floor.begin(), floor.end(), dst_floor.begin());
 
-        #pragma omp parallel for
+        //#pragma omp parallel for
         for(int y=1; y<height-1; ++y){
             for(int x=1; x<width-1; ++x){
         
